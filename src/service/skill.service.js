@@ -1,45 +1,45 @@
-const fs = require('fs');
+const fs = require(`fs`);
+const path = `./storage/storage.json`;
+class Service {
+  getAllSkills() {
+    const array = JSON.parse(fs.readFileSync(path));
+    if (!array.length) throw new Error('Array is empty');
+    return array;
+  }
 
-const path = './storage/storage.json';
+  getSkillById(id) {
+    const arr = JSON.parse(fs.readFileSync(path));
+    const filtered = arr.filter(el => el.id == id);
+    if (!filtered.length) throw new Error('There is no such id');
+    return filtered
+  }
 
-function getAllSkills() {
-  const array = JSON.parse(fs.readFileSync(path));
-  if (!array.length) throw new Error('Array is empty');
-  return array;
+  createSkill(title) {
+    const arr = JSON.parse(fs.readFileSync(path));
+    const filtered = arr.filter(el => el.title == title);
+    if (filtered.length > 0) throw new Error(`такой title уже есть`)
+    const obj = { id: arr.length + 1, title: title }
+    arr.push(obj)
+    fs.writeFileSync(path, JSON.stringify(arr))
+    return arr
+  }
+
+  updateSkill(id, title) {
+    const arr = JSON.parse(fs.readFileSync(path));
+    const filtered = arr.filter(el => el.id != id)
+    if (filtered.length == arr.length) throw new Error(`такого id нет`)
+    const obj = { id: id, title: title }
+    filtered.push(obj)
+    fs.writeFileSync(path, JSON.stringify(filtered))
+    return filtered
+  }
+
+  deleteSkill(id) {
+    const arr = JSON.parse(fs.readFileSync(path));
+    const filtered = arr.filter(el => el.id != id);
+    if (filtered.length == array.length) throw new Error('There is no such id');
+    fs.writeFileSync(path, JSON.stringify(filtered))
+    return filtered
+  }
 }
-
-function getAllSkillById(id) {
-  const array = JSON.parse(fs.readFileSync(path));
-  const filtered = array.filter(elem => elem.id == id);
-  if (!filtered.length) throw new Error('There is no such id');
-  return filtered;
-}
-
-function createSkill(title) {
-  const array = JSON.parse(fs.readFileSync(path));
-  array.push({
-    id: array.length + 1,
-    title,
-  });
-  fs.writeFileSync(path, JSON.stringify(array));
-  return array;
-}
-
-function updateSkill(id, title) {
-  const array = JSON.parse(fs.readFileSync(path));
-  const index = array.findIndex(elem => elem.id == id);
-  if (index == -1) throw new Error('There is no such id');
-  array[index].title = title;
-  fs.writeFileSync(path, JSON.stringify(array));
-  return array;
-}
-
-function deleteSkill(id) {
-  const array = JSON.parse(fs.readFileSync(path));
-  const filtered = array.filter(elem => elem.id != id);
-  if (filtered.length == array.length) throw new Error('There is no such id');
-  fs.writeFileSync(path, JSON.stringify(filtered));
-  return filtered;
-}
-
-module.exports = { getAllSkills, getAllSkillById, createSkill, updateSkill, deleteSkill };
+module.exports = { Service }
